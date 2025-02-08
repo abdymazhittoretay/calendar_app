@@ -10,10 +10,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final CalendarFormat _format = CalendarFormat.month;
-  DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+
+  final Map<DateTime, List<String>> _events = {};
+
+  late final ValueNotifier<List<String>> _selectedEvents;
 
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_getEvents(_selectedDay!));
+    super.initState();
+  }
+
+  List<String> _getEvents(DateTime day) {
+    return _events[day] ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +46,14 @@ class _HomePageState extends State<HomePage> {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
               });
+              _getEvents(_selectedDay!);
             }
           },
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
           onPageChanged: (focusedDay) {
             _focusedDay = focusedDay;
           },
+          eventLoader: _getEvents,
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -57,6 +74,9 @@ class _HomePageState extends State<HomePage> {
               actions: [
                 TextButton(
                     onPressed: () {
+                      _events.addAll({
+                        _selectedDay!: [_controller.text]
+                      });
                       _controller.clear();
                       Navigator.pop(context);
                     },
