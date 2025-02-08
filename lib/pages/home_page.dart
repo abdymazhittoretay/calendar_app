@@ -35,25 +35,43 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: TableCalendar(
-          calendarFormat: _format,
-          focusedDay: _focusedDay,
-          firstDay: DateTime.utc(1980, 01, 01),
-          lastDay: DateTime.utc(2100, 12, 31),
-          onDaySelected: (selectedDay, focusedDay) {
-            if (!isSameDay(_selectedDay, selectedDay)) {
-              setState(() {
-                _selectedDay = selectedDay;
+        child: Column(
+          children: [
+            TableCalendar(
+              calendarFormat: _format,
+              focusedDay: _focusedDay,
+              firstDay: DateTime.utc(1980, 01, 01),
+              lastDay: DateTime.utc(2100, 12, 31),
+              onDaySelected: (selectedDay, focusedDay) {
+                if (!isSameDay(_selectedDay, selectedDay)) {
+                  setState(() {
+                    _selectedDay = selectedDay;
+                    _focusedDay = focusedDay;
+                    _selectedEvents.value = _getEvents(_selectedDay!);
+                  });
+                }
+              },
+              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+              onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
-              });
-              _getEvents(_selectedDay!);
-            }
-          },
-          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-          onPageChanged: (focusedDay) {
-            _focusedDay = focusedDay;
-          },
-          eventLoader: _getEvents,
+              },
+              eventLoader: _getEvents,
+            ),
+            Expanded(
+                child: ValueListenableBuilder(
+              valueListenable: _selectedEvents,
+              builder: (context, value, child) {
+                return ListView.builder(
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(value[index]),
+                    );
+                  },
+                );
+              },
+            )),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -74,9 +92,14 @@ class _HomePageState extends State<HomePage> {
               actions: [
                 TextButton(
                     onPressed: () {
-                      _events.addAll({
-                        _selectedDay!: [_controller.text]
-                      });
+                      if (_controller.text.isNotEmpty) {
+                        final List<String> eventList =
+                            _getEvents(_selectedDay!);
+                        eventList.insert(0, _controller.text);
+                        _events.addAll({_selectedDay!: eventList});
+                        _selectedEvents.value = _getEvents(_selectedDay!);
+                        setState(() {});
+                      }
                       _controller.clear();
                       Navigator.pop(context);
                     },
