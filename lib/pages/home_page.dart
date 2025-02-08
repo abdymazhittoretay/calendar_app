@@ -13,6 +13,8 @@ class _HomePageState extends State<HomePage> {
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
 
+  final TextEditingController _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,6 +37,38 @@ class _HomePageState extends State<HomePage> {
           onPageChanged: (focusedDay) {
             _focusedDay = focusedDay;
           },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.deepPurple,
+        elevation: 0.0,
+        shape: CircleBorder(),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: Colors.white,
+              shape: LinearBorder(),
+              title: Text("Add event:"),
+              content: TextField(
+                autofocus: true,
+                controller: _controller,
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      _controller.clear();
+                      Navigator.pop(context);
+                    },
+                    child: Text("Add")),
+              ],
+            ),
+          );
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+          size: 30.0,
         ),
       ),
     );
