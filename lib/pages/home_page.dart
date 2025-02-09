@@ -38,10 +38,21 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: [
             TableCalendar(
+              calendarStyle: CalendarStyle(
+                selectedDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.deepPurple,
+                ),
+                todayDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.deepPurple[200],
+                ),
+              ),
               calendarFormat: _format,
               focusedDay: _focusedDay,
               firstDay: DateTime.utc(1980, 01, 01),
               lastDay: DateTime.utc(2100, 12, 31),
+              startingDayOfWeek: StartingDayOfWeek.monday,
               onDaySelected: (selectedDay, focusedDay) {
                 if (!isSameDay(_selectedDay, selectedDay)) {
                   setState(() {
@@ -52,15 +63,19 @@ class _HomePageState extends State<HomePage> {
                 }
               },
               onFormatChanged: (format) {
-                setState(() {
-                  _format = format;
-                });
+                if (_format != format) {
+                  setState(() {
+                    _format = format;
+                  });
+                }
               },
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onPageChanged: (focusedDay) {
                 _focusedDay = focusedDay;
               },
-              eventLoader: _getEvents,
+              eventLoader: (day) {
+                return _getEvents(day);
+              },
             ),
             Expanded(
                 child: ValueListenableBuilder(
@@ -95,9 +110,6 @@ class _HomePageState extends State<HomePage> {
                     : Center(
                         child: Text(
                           "No events on this day.",
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
                         ),
                       );
               },
