@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final CalendarFormat _format = CalendarFormat.month;
+  CalendarFormat _format = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
@@ -50,6 +50,11 @@ class _HomePageState extends State<HomePage> {
                     _selectedEvents.value = _getEvents(_selectedDay!);
                   });
                 }
+              },
+              onFormatChanged: (format) {
+                setState(() {
+                  _format = format;
+                });
               },
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onPageChanged: (focusedDay) {
