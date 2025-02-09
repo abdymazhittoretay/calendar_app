@@ -61,14 +61,40 @@ class _HomePageState extends State<HomePage> {
                 child: ValueListenableBuilder(
               valueListenable: _selectedEvents,
               builder: (context, value, child) {
-                return ListView.builder(
-                  itemCount: value.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(value[index]),
-                    );
-                  },
-                );
+                return value.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            margin: EdgeInsets.only(
+                                top: 10.0, left: 10.0, right: 10.0),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black)),
+                            child: ListTile(
+                              title: Text(value[index]),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    _events.remove(_selectedDay);
+                                    _selectedEvents.value =
+                                        _getEvents(_selectedDay!);
+                                    setState(() {});
+                                  },
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.black,
+                                  )),
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Text(
+                          "No events on this day.",
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ),
+                        ),
+                      );
               },
             )),
           ],
