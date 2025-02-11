@@ -1,3 +1,4 @@
+import 'package:calendar_app/database/events_database.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -13,21 +14,22 @@ class _HomePageState extends State<HomePage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
-  final Map<DateTime, List<String>> _events = {};
-
   late final ValueNotifier<List<String>> _selectedEvents;
 
   final TextEditingController _controller = TextEditingController();
 
+  final EventsDatabase db = EventsDatabase();
+
   @override
   void initState() {
+    db.loadData();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEvents(_selectedDay!));
     super.initState();
   }
 
   List<String> _getEvents(DateTime day) {
-    return _events[day] ?? [];
+    return db.events[day] ?? [];
   }
 
   @override
@@ -100,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                               title: Text(value[index]),
                               trailing: IconButton(
                                   onPressed: () {
-                                    _events.remove(_selectedDay);
+                                    db.events.remove(_selectedDay);
+                                    db.saveData();
                                     _selectedEvents.value =
                                         _getEvents(_selectedDay!);
                                     setState(() {});
@@ -145,7 +148,8 @@ class _HomePageState extends State<HomePage> {
                         final List<String> eventList =
                             _getEvents(_selectedDay!);
                         eventList.insert(0, _controller.text);
-                        _events.addAll({_selectedDay!: eventList});
+                        db.events.addAll({_selectedDay!: eventList});
+                        db.saveData();
                         _selectedEvents.value = _getEvents(_selectedDay!);
                         setState(() {});
                       }
