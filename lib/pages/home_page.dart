@@ -40,8 +40,11 @@ class _HomePageState extends State<HomePage> {
             TableCalendar(
               calendarStyle: CalendarStyle(
                 markerDecoration: BoxDecoration(
-                    border: Border.all(color: Colors.white, width: 1),
-                    color: Colors.black),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 0.75,
+                    ),
+                    color: Colors.white),
                 selectedDecoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.deepPurple,
