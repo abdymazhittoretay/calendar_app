@@ -13,8 +13,7 @@ class EventsDatabase {
   void saveData() {
     List allDynamicEvents = [];
     for (var eventKey in events.keys) {
-      allDynamicEvents
-          .add([eventKey, events[eventKey]]);
+      allDynamicEvents.add([eventKey, events[eventKey]]);
     }
     calendarBox.put("DAYEVENTS", allDynamicEvents);
   }

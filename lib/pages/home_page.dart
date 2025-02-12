@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                               title: Text(value[index]),
                               trailing: IconButton(
                                   onPressed: () {
-                                    db.events.remove(_selectedDay);
+                                    db.events[_selectedDay]!.removeAt(index);
                                     db.saveData();
                                     _selectedEvents.value =
                                         _getEvents(_selectedDay!);
