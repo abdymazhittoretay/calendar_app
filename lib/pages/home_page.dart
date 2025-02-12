@@ -23,7 +23,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     db.loadData();
-    _selectedDay = _focusedDay;
+    _selectedDay =
+        DateTime.utc(_focusedDay.year, _focusedDay.month, _focusedDay.day);
     _selectedEvents = ValueNotifier(_getEvents(_selectedDay!));
     super.initState();
   }
